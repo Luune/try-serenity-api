@@ -9,13 +9,31 @@
 
     <name>Sample Serenity BDD project using JUnit 5</name>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <restapi.baseurl>http://localhost:5000/api</restapi.baseurl>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <restapi.baseurl>https://reqres.in/api</restapi.baseurl>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <serenity.version>4.2.30</serenity.version>
+        <serenity.cucumber.version>4.2.30</serenity.cucumber.version>
+        <cucumber.version>7.17.0</cucumber.version>
+        <rest-assured.version>5.4.0</rest-assured.version>
         <junit5.version>5.12.2</junit5.version>
         <junit.version>4.13.2</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tags></tags>
-        <webdriver.base.url></webdriver.base.url>
+        <tags/>
+        <webdriver.base.url/>
     </properties>
     <dependencies>
         <dependency>
@@ -57,7 +75,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.5.13</version>
         </dependency>
         <!-- JUNIT 5 DEPENDENCY-->
         <dependency>
@@ -90,6 +108,54 @@
             <version>3.22.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-rest-assured</artifactId>
+            <version>${serenity.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-screenplay-rest</artifactId>
+            <version>${serenity.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-cucumber</artifactId>
+            <version>${serenity.cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -98,6 +164,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                    </argLine>
                     <skip>true</skip>
                 </configuration>
             </plugin>
@@ -110,6 +179,7 @@
                         <include>**/Test*.java</include>
                         <include>**/*TestSuite.java</include>
                         <include>**/When*.java</include>
+                        <include>**/*Feature.java</include>
                     </includes>
                     <systemPropertyVariables>
                         <webdriver.base.url>${webdriver.base.url}</webdriver.base.url>
@@ -143,7 +213,6 @@
                 <version>${serenity.version}</version>
                 <configuration>
                     <tags>${tags}</tags>
-                    <reports>single-page-html</reports>
                 </configuration>
                 <executions>
                     <execution>
