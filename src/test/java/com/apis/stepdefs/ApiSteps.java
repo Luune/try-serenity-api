@@ -18,6 +18,9 @@ public class ApiSteps {
 
     private RequestSpecification request;
     private Response response;
+    private String currentEnvironment = "default"; // 默认环境
+    private String httpMethod; // 存储HTTP方法
+    private String path; // 存储路径
 
     @Given("baseUri is {string}")
     public void setBaseUri(String baseUri) {
@@ -28,16 +31,18 @@ public class ApiSteps {
     @When("I set method to {string}")
     public void setMethod(String method) {
         // 方法会在execute步骤中实际使用
-    }
-
-    @And("I set Content-Type header to {string}")
-    public void setContentTypeHeader(String contentType) {
-        request.contentType(contentType);
+        this.httpMethod = method.toUpperCase();
     }
 
     @And("I set the path to {string}")
     public void setPath(String path) {
         // 路径会在execute步骤中实际使用
+        this.path = path;
+    }
+
+    @And("I set Content-Type header to {string}")
+    public void setContentTypeHeader(String contentType) {
+        request.contentType(contentType);
     }
 
     @And("I set body with this json")
@@ -47,8 +52,34 @@ public class ApiSteps {
 
     @And("I execute the request")
     public void executeRequest() {
-        // 这里简化处理为POST请求，实际中可以根据setMethod的值动态选择
-        response = request.when().post("/api/auditcenter/auditlog/listByLoki");
+        if (httpMethod == null || httpMethod.isEmpty()) {
+            throw new IllegalStateException("HTTP method is not set. Please use 'I set method to ...' step");
+        }
+
+        if (path == null || path.isEmpty()) {
+            throw new IllegalStateException("Path is not set. Please use 'I set the path to ...' step");
+        }
+
+        // 根据设置的HTTP方法执行请求
+        switch (httpMethod) {
+            case "GET":
+                response = request.when().get(path);
+                break;
+            case "POST":
+                response = request.when().post(path);
+                break;
+            case "PUT":
+                response = request.when().put(path);
+                break;
+            case "DELETE":
+                response = request.when().delete(path);
+                break;
+            case "PATCH":
+                response = request.when().patch(path);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
+        }
     }
 
     @Then("the response code is {int}")

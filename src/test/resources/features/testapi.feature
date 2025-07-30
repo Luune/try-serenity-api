@@ -1,6 +1,6 @@
-@logs
+@SIT
 Feature: API function - Search logs and update log with audit actions
-  In order to test
+  In order to test simcotools
 
   Background:
     Given baseUri is https://api.simcotools.com
@@ -15,4 +15,4 @@ Feature: API function - Search logs and update log with audit actions
     And response body should be valid json
     Examples:
       | path                                 | responseCode |
-      | /v1/realms/{realm}/market/vwaps/83/4 | 200          |
+      | /v1/realms/0/market/vwaps/83/4 | 200          |
