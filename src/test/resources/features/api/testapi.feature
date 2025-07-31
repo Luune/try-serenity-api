@@ -1,5 +1,5 @@
 @SIT
-Feature: API function - Search logs and update log with audit actions
+Feature: API function - Check daily VWAP and average price
   In order to test simcotools
 
   Background:
@@ -18,7 +18,7 @@ Feature: API function - Search logs and update log with audit actions
       | /v1/realms/0/market/vwaps/83/4       | 200          |
 
   @NO_UI @price1
-  Scenario Outline: Get the price of 柴油Q4
+  Scenario Outline: Get the price of multiple goods
     When I set method to "GET"
     And I set the path to "<path>"
     And I set params as list
@@ -30,5 +30,9 @@ Feature: API function - Search logs and update log with audit actions
     And the response content type should be "application/json"
     And response body should be valid json
     Examples:
-      | path                                 | responseCode |
+      | path                                                  | responseCode |
       | /v1/realms/0/market/resources/12/4/candlesticks       | 200          |
+      | /v1/realms/0/market/resources/83/4/candlesticks       | 200          |
+      | /v1/realms/0/market/resources/10/4/candlesticks       | 200          |
+      | /v1/realms/0/market/resources/74/4/candlesticks       | 200          |
+      | /v1/realms/0/market/resources/143/4/candlesticks      | 200          |
