@@ -33,6 +33,11 @@ public class ApiDefinitions {
         apiStepsHelper.setContentTypeHeader(contentType);
     }
 
+    @And("I set params as list")
+    public void setParamsAsList(DataTable dataTable) {
+        apiStepsHelper.setParamsAsList(dataTable);
+    }
+
     @And("I set body with this json")
     public void setBody(String body) {
         apiStepsHelper.setBody(body);
