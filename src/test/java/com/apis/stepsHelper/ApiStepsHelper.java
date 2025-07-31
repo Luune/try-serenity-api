@@ -1,20 +1,15 @@
-package com.apis.stepdefs;
+package com.apis.stepsHelper;
 
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.And;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import net.serenitybdd.rest.SerenityRest;
-import net.serenitybdd.annotations.Steps;
-import io.cucumber.java.zh_cn.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.*;
+import net.serenitybdd.core.Serenity;
 
-public class ApiSteps {
+public class ApiStepsHelper {
 
     private RequestSpecification request;
     private Response response;
@@ -22,36 +17,31 @@ public class ApiSteps {
     private String httpMethod; // 存储HTTP方法
     private String path; // 存储路径
 
-    @Given("baseUri is {string}")
-    public void setBaseUri(String baseUri) {
-        RestAssured.baseURI = baseUri;
+    public ApiStepsHelper() {
         request = SerenityRest.given();
     }
 
-    @When("I set method to {string}")
+    public void setBaseUri(String baseUri) {
+        request.baseUri(baseUri);
+    }
+
     public void setMethod(String method) {
-        // 方法会在execute步骤中实际使用
         this.httpMethod = method.toUpperCase();
     }
 
-    @And("I set the path to {string}")
     public void setPath(String path) {
-        // 路径会在execute步骤中实际使用
         this.path = path;
     }
 
-    @And("I set Content-Type header to {string}")
     public void setContentTypeHeader(String contentType) {
         request.contentType(contentType);
     }
 
-    @And("I set body with this json")
     public void setBody(String body) {
         request.body(body);
     }
 
-    @And("I execute the request")
-    public void executeRequest() {
+    public void executeRequest() throws IllegalStateException, IllegalArgumentException {
         if (httpMethod == null || httpMethod.isEmpty()) {
             throw new IllegalStateException("HTTP method is not set. Please use 'I set method to ...' step");
         }
@@ -80,24 +70,22 @@ public class ApiSteps {
             default:
                 throw new IllegalArgumentException("Unsupported HTTP method: " + httpMethod);
         }
+        Serenity.setSessionVariable("response").to(response);
     }
 
-    @Then("the response code is {int}")
     public void verifyResponseCode(int expectedCode) {
         response.then().statusCode(expectedCode);
     }
 
-    @And("the response content type should be {string}")
     public void verifyContentType(String contentType) {
         response.then().contentType(ContentType.fromContentType(contentType));
     }
 
-    @And("response body should be valid json")
     public void verifyValidJson() {
         // 更可靠的 JSON 验证方式
         response.then().assertThat().body(anything());
     }
-    @And("response body should match schema {string}")
+
     public void verifyJsonSchema(String schemaFile) {
         response.then().assertThat().body(matchesJsonSchemaInClasspath(schemaFile));
     }

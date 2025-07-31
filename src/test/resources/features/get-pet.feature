@@ -1,3 +1,4 @@
+@pet
 Feature: Get Kitty
 
   Scenario: Get Kitty ID
