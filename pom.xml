@@ -169,6 +169,14 @@
                         --add-opens java.base/java.lang=ALL-UNNAMED
                     </argLine>
                     <skip>true</skip>
+                    <!-- 指定测试运行器类 -->
+                    <includes>
+                        <include>**/*TestRunner.java</include>
+                    </includes>
+                    <!-- 关联Cucumber报告，让Maven识别场景数量 -->
+                    <systemPropertyVariables>
+                        <cucumber.reporting.enabled>true</cucumber.reporting.enabled>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>

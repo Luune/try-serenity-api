@@ -8,7 +8,11 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources/features",
         glue = "com.apis",
-        tags = "@NO_UI"
+        tags = "@NO_UI",
+        plugin = {
+                "pretty",
+                "json:target/cucumber-reports/cucumber.json" // 生成JSON报告，供Maven识别
+        }
 )
 public class TestRunner {
 }
